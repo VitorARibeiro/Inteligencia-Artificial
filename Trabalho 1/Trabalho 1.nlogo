@@ -1,92 +1,71 @@
-globals [
-  candy-spawn-timer  ; Timer para controlar quando o próximo rebuçado aparece
-]
 
-turtles-own [
- immune-collisions ; Contador para tartarugas imunes (5 colisões)
-]
+breed [Cleaners cleaner]
+breed [Polluters polluter]
+
 
 to Setup
-  clear-all
-  reset-ticks
-  set candy-spawn-timer candy-spawn-interval  ; Inicializa o timer do rebuçado
+clear-all
+reset-ticks
 
-  create-turtles 100 [
-    setxy random-pxcor random-pycor
-    set heading random 360
-    set size 1
-    set color green  ; Todas as tartarugas começam saudáveis (verdes)
-    set shape "Person"
-    set immune-collisions 0
+  ask patches[
+  set pcolor 106
+
   ]
 
-  ; Infetar um número de tartarugas conforme o slider inicial
-  ask n-of initial-infected turtles [
-    set color red  ; Tartarugas infetadas (vermelhas)
-  ]
+create-cleaners 1 [
+
+  set size 2
+  setxy -20 -20
+  set color white
+  set shape "Person Student"
+
+]
+
+create-polluters 3 [
+
+  setxy random-pxcor random-pycor
+  set size 2
+  set color Orange
+  set shape "Fish 3"
+
+]
+
 end
+
 
 to Go
-  ask turtles [
-    move-turtle
-    check-collision
-    check-immunity
+  ask polluters[
+   fd 1  ; A tartaruga move-se para a frente 1 unidade
+
+  ; X% de chance de mudar de direção (por exemplo, 30%)
+
+  if random-float 100 < 30 [
+    rt 60 - random 120  ; Vira aleatoriamente até 90 graus para a direita
   ]
 
-  ; Controla o spawn de rebuçados azuis
-  if ticks mod candy-spawn-interval = 0 [
-    spawn-candy
+  if random-float 100 < 1 [ ; 1% de chance
+    deposit-waste
   ]
-
-  tick
+  ]
 end
 
-to move-turtle
-  forward 1  ; Faz as tartarugas moverem-se
-  set heading random 360
-end
+;Funcoes
 
-to check-collision
-  let infected-turtles other turtles-here with [color = red]  ; Tartarugas infetadas no mesmo patch
-
-  if any? infected-turtles [
-    if immune-collisions > 0 [
-      set immune-collisions immune-collisions - 1  ; Reduz o número de colisões imunes
-      if immune-collisions = 0 [
-        set color green  ; Perde a imunidade após 5 colisões
-      ]
-    ]
-    if immune-collisions = 0 [
-      set color red  ; Se não tiver imunidade, fica infetada ao tocar num infetado
+to deposit-waste
+  ask patch-here [
+    if pcolor = 106 [  ; Verifica se o patch não é azul
+      let new-color one-of [gray brown green orange]  ; Escolhe aleatoriamente uma cor
+      set pcolor new-color  ; Muda a cor do patch para a nova cor
     ]
   ]
 end
 
-
-
-to check-immunity
-  ; Se tocar num rebuçado (patch azul), ganha imunidade e é curada se estiver infetada
-  if pcolor = blue [
-    set immune-collisions immune-collisions-slider  ; Ganha 5 colisões de imunidade
-    if color = red [
-      set color green  ; Se estava infetada (vermelha), é curada e volta a ser verde
-    ]
-    set color cyan  ; Se era saudável, fica ciano para mostrar imunidade
-    set pcolor black  ; O rebuçado desaparece após ser comido
-  ]
-end
-
-to spawn-candy
-  ask patch random-pxcor random-pycor [
-    set pcolor blue  ; Coloca um rebuçado azul num local aleatório
-  ]
-end
 @#$#@#$#@
 GRAPHICS-WINDOW
-627
+146
 10
-1064
-448
+687
+552
 -1
 -1
 13.0
@@ -99,10 +78,10 @@ GRAPHICS-WINDOW
 1
 1
 1
--16
-16
--16
-16
+-20
+20
+-20
+20
 0
 0
 1
@@ -110,10 +89,10 @@ ticks
 30.0
 
 BUTTON
-61
+9
+22
 72
-124
-105
+55
 Setup
 Setup
 NIL
@@ -127,10 +106,44 @@ NIL
 1
 
 BUTTON
-60
-115
-123
-148
+11
+96
+90
+129
+Go_Once
+Go_Once
+NIL
+1
+T
+OBSERVER
+NIL
+O
+NIL
+NIL
+1
+
+BUTTON
+10
+59
+73
+92
+Go_N
+Go_N
+NIL
+1
+T
+OBSERVER
+NIL
+N
+NIL
+NIL
+1
+
+BUTTON
+12
+133
+75
+166
 Go
 Go
 T
@@ -142,69 +155,6 @@ G
 NIL
 NIL
 1
-
-SLIDER
-200
-71
-372
-104
-initial-infected
-initial-infected
-1
-100
-1.0
-1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-205
-129
-377
-162
-candy-spawn-interval
-candy-spawn-interval
-1
-50
-1.0
-1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-205
-212
-380
-245
-immune-collisions-slider
-immune-collisions-slider
-0
-20
-0.0
-1
-1
-NIL
-HORIZONTAL
-
-PLOT
-104
-363
-304
-513
-Infetados
-NIL
-NIL
-0.0
-10.0
-0.0
-10.0
-true
-false
-"" ""
-PENS
-"default" 1.0 0 -2674135 true "" "plot count turtles [Color = red]"
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -360,6 +310,26 @@ Polygon -1 true false 75 45 83 77 71 103 86 114 166 78 135 60
 Polygon -7500403 true true 30 136 151 77 226 81 280 119 292 146 292 160 287 170 270 195 195 210 151 212 30 166
 Circle -16777216 true false 215 106 30
 
+fish 3
+false
+0
+Polygon -7500403 true true 137 105 124 83 103 76 77 75 53 104 47 136
+Polygon -7500403 true true 226 194 223 229 207 243 178 237 169 203 167 175
+Polygon -7500403 true true 137 195 124 217 103 224 77 225 53 196 47 164
+Polygon -7500403 true true 40 123 32 109 16 108 0 130 0 151 7 182 23 190 40 179 47 145
+Polygon -7500403 true true 45 120 90 105 195 90 275 120 294 152 285 165 293 171 270 195 210 210 150 210 45 180
+Circle -1184463 true false 244 128 26
+Circle -16777216 true false 248 135 14
+Line -16777216 false 48 121 133 96
+Line -16777216 false 48 179 133 204
+Polygon -7500403 true true 241 106 241 77 217 71 190 75 167 99 182 125
+Line -16777216 false 226 102 158 95
+Line -16777216 false 171 208 225 205
+Polygon -1 true false 252 111 232 103 213 132 210 165 223 193 229 204 247 201 237 170 236 137
+Polygon -1 true false 135 98 140 137 135 204 154 210 167 209 170 176 160 156 163 126 171 117 156 96
+Polygon -16777216 true false 192 117 171 118 162 126 158 148 160 165 168 175 188 183 211 186 217 185 206 181 172 171 164 156 166 133 174 121
+Polygon -1 true false 40 121 46 147 42 163 37 179 56 178 65 159 67 128 59 116
+
 flag
 false
 0
@@ -422,6 +392,21 @@ Polygon -7500403 true true 105 90 120 195 90 285 105 300 135 300 150 225 165 300
 Rectangle -7500403 true true 127 79 172 94
 Polygon -7500403 true true 195 90 240 150 225 180 165 105
 Polygon -7500403 true true 105 90 60 150 75 180 135 105
+
+person student
+false
+0
+Polygon -13791810 true false 135 90 150 105 135 165 150 180 165 165 150 105 165 90
+Polygon -7500403 true true 195 90 240 195 210 210 165 105
+Circle -7500403 true true 110 5 80
+Rectangle -7500403 true true 127 79 172 94
+Polygon -7500403 true true 105 90 120 195 90 285 105 300 135 300 150 225 165 300 195 300 210 285 180 195 195 90
+Polygon -1 true false 100 210 130 225 145 165 85 135 63 189
+Polygon -13791810 true false 90 210 120 225 135 165 67 130 53 189
+Polygon -1 true false 120 224 131 225 124 210
+Line -16777216 false 139 168 126 225
+Line -16777216 false 140 167 76 136
+Polygon -7500403 true true 105 90 60 195 90 210 135 105
 
 plant
 false
