@@ -1,11 +1,10 @@
-
 breed [Cleaners cleaner]
 breed [Polluters polluter]
 
 
 to Setup
 clear-all
-reset-ticks
+reset-ticks ; Reset do tempo
 
   ask patches[
   set pcolor 106
@@ -49,6 +48,14 @@ to Go
   ]
 end
 
+to Go-N-Times
+
+  repeat N-Ticks [
+  go ;chamar o procedimento principal
+  ]
+end
+
+
 ;Funcoes
 
 to deposit-waste
@@ -59,12 +66,11 @@ to deposit-waste
     ]
   ]
 end
-
 @#$#@#$#@
 GRAPHICS-WINDOW
-146
+197
 10
-687
+738
 552
 -1
 -1
@@ -89,10 +95,10 @@ ticks
 30.0
 
 BUTTON
-9
-22
-72
-55
+63
+33
+126
+66
 Setup
 Setup
 NIL
@@ -106,12 +112,12 @@ NIL
 1
 
 BUTTON
-11
-96
-90
-129
+66
+163
+145
+196
 Go_Once
-Go_Once
+Go
 NIL
 1
 T
@@ -123,12 +129,12 @@ NIL
 1
 
 BUTTON
-10
-59
-73
-92
+65
+126
+128
+159
 Go_N
-Go_N
+go-n-times
 NIL
 1
 T
@@ -140,10 +146,10 @@ NIL
 1
 
 BUTTON
-12
-133
-75
-166
+67
+200
+130
+233
 Go
 Go
 T
@@ -155,6 +161,21 @@ G
 NIL
 NIL
 1
+
+SLIDER
+9
+277
+181
+310
+N-Ticks
+N-Ticks
+1
+100
+1.0
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?

@@ -1,11 +1,10 @@
-
 breed [Cleaners cleaner]
 breed [Polluters polluter]
 
 
 to Setup
 clear-all
-reset-ticks
+reset-ticks ; Reset do tempo
 
   ask patches[
   set pcolor 106
@@ -49,22 +48,29 @@ to Go
   ]
 end
 
+to Go-N-Times
+
+  repeat N-Ticks [
+  go ;chamar o procedimento principal
+  ]
+end
+
+
 ;Funcoes
 
 to deposit-waste
   ask patch-here [
-    if pcolor =  [  ; Verifica se o patch não é azul
+    if pcolor = 106 [  ; Verifica se o patch não é azul
       let new-color one-of [gray brown green orange]  ; Escolhe aleatoriamente uma cor
       set pcolor new-color  ; Muda a cor do patch para a nova cor
     ]
   ]
 end
-
 @#$#@#$#@
 GRAPHICS-WINDOW
-146
+399
 10
-687
+940
 552
 -1
 -1
@@ -106,12 +112,12 @@ NIL
 1
 
 BUTTON
-11
-96
-90
-129
+66
+163
+145
+196
 Go_Once
-Go_Once
+Go
 NIL
 1
 T
@@ -123,12 +129,12 @@ NIL
 1
 
 BUTTON
-10
-59
-73
-92
+65
+126
+128
+159
 Go_N
-Go_N
+go-n-times
 NIL
 1
 T
@@ -140,10 +146,10 @@ NIL
 1
 
 BUTTON
-12
-133
-75
-166
+67
+200
+130
+233
 Go
 Go
 T
@@ -155,6 +161,21 @@ G
 NIL
 NIL
 1
+
+SLIDER
+12
+412
+184
+445
+N-Ticks
+N-Ticks
+1
+100
+84.0
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
