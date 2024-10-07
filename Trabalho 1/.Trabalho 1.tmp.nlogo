@@ -100,7 +100,7 @@ end
 
 
 to deposit-waste
-  if pcolor = CorDeFundo[
+  if (pcolor = CorDeFundo or pcolor = CorContentor)[
 
     ifelse color = yellow [
     if random-float 100 < Yellow-Polluter-Chance [
